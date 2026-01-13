@@ -11,7 +11,7 @@ bool isPrime(int number)
     return true;
 }
 
-void printPrimesInRange(int start, int end)
+void printPrimesInRange(int start, int end) // passing the range of number to check the prime numbers
 {
     for(int a=start; a<=end; a++) 
     {
