@@ -149,10 +149,11 @@ public:
     }
 };
 
+
 int main()
 {
     // --- test full constructor ---
-    SavingsAccount acc1{"ACC001", "Alex Sae", 1000.0, 0.05};
+    SavingsAccount acc1{"ACC001", "John Doe", 1000.0, 0.05};
     acc1.getInfo();
     std::cout << "---" << std::endl;
 
@@ -166,15 +167,15 @@ int main()
 
     // --- test invalid withdraw — balance should not change ---
     acc1.withdraw(9999.0);
-    std::cout << "After bad withdraw: " << acc1.getBalance() << std::endl;  // still 1400
+    std::cout << "After bad withdraw: " << acc1.getBalance() << std::endl;  // 1400
 
-    // --- test applyInterest ---
-    acc1.applyInterest();   // should add 1400 * 0.05 = 70, new balance 1470
+    // --- test applyInterest on savings ---
+    acc1.applyInterest();   // 1400 * 0.05 = 70 added, new balance 1470
     std::cout << "---" << std::endl;
 
-    // --- test delegating constructor --- 
-    SavingsAccount acc2{"ACC002", "Jenny Elen"};  // no balance or rate given
-    acc2.getInfo();         // balance should be 0, interest rate 0.03
+    // --- test delegating constructor ---
+    SavingsAccount acc2{"ACC002", "Jane Doe"};
+    acc2.getInfo();
     std::cout << "---" << std::endl;
 
     // --- test validation — negative balance becomes 0 ---
@@ -183,28 +184,41 @@ int main()
 
     // --- test validation — bad interest rate becomes 0.03 ---
     SavingsAccount acc4{"ACC004", "Bad Rate", 1000.0, -0.5};
-    acc4.getInfo();         // interest rate should show 0.03
+    acc4.getInfo();
+    std::cout << "---" << std::endl;
 
-
-
-
-    //for Current Class
+    // --- current account tests ---
     CurrentAccount curr{"ACC005", "Alice", 500.0, 200.0};
     curr.getInfo();
     std::cout << "---" << std::endl;
 
     // normal withdraw
     curr.withdraw(300.0);
-    std::cout << "After withdraw: " << curr.getBalance() << std::endl;  // 200
+    std::cout << "After withdraw: " << curr.getBalance() << std::endl;   // 200
 
-    // overdraft withdraw — goes below 0 but within limit
+    // overdraft — goes below 0 but within limit
     curr.withdraw(350.0);
     std::cout << "After overdraft: " << curr.getBalance() << std::endl;  // -150
 
     // exceeds overdraft limit — should fail
     curr.withdraw(999.0);
-    std::cout << "After bad withdraw: " << curr.getBalance() << std::endl;  // still -150
+    std::cout << "After bad withdraw: " << curr.getBalance() << std::endl; // -150
 
-    // apply interest
-    curr.applyInterest();   // prints "No interest for Current account"
+    // apply interest on current — just prints message
+    curr.applyInterest();
+    std::cout << "---" << std::endl;
+
+    // --- POLYMORPHISM — store all accounts in vector<Account*> ---
+    std::cout << "=== ALL ACCOUNTS ===" << std::endl;
+    std::vector<Account*> accounts = {&acc1, &acc2, &curr};
+
+    for (Account* acc : accounts) {
+        acc->getInfo();                                    // correct getInfo() for each type
+        std::cout << "Type: "    << acc->getType()    << std::endl;  // correct getType()
+        std::cout << "Balance: " << acc->getBalance() << std::endl;
+        acc->applyInterest();                              // correct applyInterest() for each
+        std::cout << "---" << std::endl;
+    }
+
+    return 0;
 }
